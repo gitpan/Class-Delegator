@@ -1,0 +1,14 @@
+--- #YAML:1.0
+name: Class-Delegator
+version: 0.01
+author:
+  - David Wheeler <david@kineticode.com>
+abstract: Simple and fast object-oriented delegation
+license: perl
+build_requires:
+  Test::Simple: 0.17
+provides:
+  Class::Delegator:
+    file: lib/Class/Delegator.pm
+    version: 0.01
+generated_by: Module::Build version 0.26

@@ -1,0 +1,124 @@
+Name
+    Class::Delegator - Simple and fast object-oriented delegation
+
+Synopsis
+      package Car;
+
+      use Class::Delegator
+          send => 'start',
+          to   => '{engine}',
+
+          send => 'power',
+          to   => 'flywheel',
+          as   => 'brake',
+
+          send => [qw(play pause rewind fast_forward shuffle)],
+          to   => 'ipod',
+
+          send => [qw(accelerate decelerate)],
+          to   => 'brakes',
+          as   => [qw(start stop)],
+      ;
+
+Description
+    This module provides a subset of the functionality of Damian Conway's
+    lovely Class::Delegation module. Why a subset? Well, I didn't need all
+    of the fancy matching semantics or dispatching to multiple delegated
+    attributes, just string string specifications to map delegations.
+    Furthermore, I wanted it to be fast. And finally, since
+    Class::Delegation uses an "INIT" block to do its magic, it doesn't work
+    in persistent environments that don't execute "INIT" blocks, such as in
+    mod_perl. The specification rules differ slightly from those of
+    Class::Delegation, so this module isn't a drop-in replacement for
+    Class::Delegation. Read on for details.
+
+  Specifying methods to be delegated
+    The names of methods to be redispatched can be specified using the
+    "send" parameter. This parameter may be specified as a single string or
+    as an array of strings. A single string specifies a single method to be
+    delegated, while an array reference is a list of methods to be
+    delegated.
+
+  Specifying attributes to be delegated to
+    Use the "to" parameter to specify the attribute or method to which the
+    methods specified by the "send" parameter are to be delegated. The
+    semantics of the "to" parameter are a bit different from
+    Class::Delegation. In order to ensure the fastest performance possible,
+    this module simply installs methods into the calling class to handle the
+    delegation. There is no use of $AUTOLOAD or other such trickery. But
+    since the new methods are installed by "eval"ing a string, the "to"
+    parameter for each delegation statement must be specified in the manner
+    appropriate to accessing the underlying attribute. For example, to
+    delegate a method call to an attribute stored in a hash key, simply wrap
+    the key in braces:
+
+      use Class::Delegator
+          send => 'start',
+          to   => '{engine}',
+      ;
+
+    To delegate to a method, simply name the method:
+
+      use Class::Delegator
+          send => 'power',
+          to   => 'flywheel',
+      ;
+
+    If your objects are array-based, wrap the appropriate array index number
+    in brackets:
+
+      use Class::Delegator
+          send => 'idle',
+          to   => '[3]',
+      ;
+
+    And so on.
+
+  Specifying the name of a delegated method
+    Sometimes it's necessary for the name of the method that's being
+    delegated to be different from the name of the method to which you're
+    delegating execution. For example, your class might already have a
+    method with the same name as the method to which you're delegating. The
+    "as" parameter allows you translate the method name or names in a
+    delegation statement. The value associated with an "as" parameter
+    specifies the name of the method to be invoked, and may be a string or
+    an array (with the number of elements in the array matching the number
+    of elements in a corresponding "send" array).
+
+    If the attribute is specified via a single string, that string is taken
+    as the name of the attribute to which the associated method (or methods)
+    should be delegated. For example, to delegate invocations of
+    "$self->power(...)" to "$self->{flywheel}->power(...)":
+
+      use Class::Delegator
+          send => 'power',
+          to   => '{flywheel}',
+          as   => 'brake',
+      ;
+
+    If both the "send" and the "as" parameters specify array references,
+    each local method name and deleted method name form a pair, which is
+    invoked. For example:
+
+      use Class::Delegator
+          send => [qw(accelerate decelerate)],
+          to   => 'brakes',
+          as   => [qw(start stop)],
+      ;
+
+    In this example, the "accelerate" method will be delegated to the
+    "start" method of the <brakes> attribute and the "decelerate" method
+    will be delegated to the "stop" method of the "brakes" attribute.
+
+Bugs
+    Please send bug reports to <bug-class-delegator@rt.cpan.org>.
+
+Author
+    David Wheeler <david@kineticode.com>
+
+Copyright and License
+    Copyright (c) 2005 Kineticode, Inc. All Rights Reserved.
+
+    This module is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
