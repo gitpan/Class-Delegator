@@ -1,4 +1,17 @@
 Revision history for Perl extension Class::Delegator.
 
+0.02  2005-01-29T20:36:34
+      - Added support for dispatching a single method call to multiple
+        attributes. The "as" parameter can be used to dispatch to different
+        methods in those multiple attributes. This brings things more in
+        line with how Class::Delegation works.
+      - Added a "Benchmarks" section to demonstrate the performance of
+        Class::Delegator vs. Class::Delegation and manually-generated
+        delegation methods.
+      - When specified as an array reference, the "as" parameter no longer
+        needs to contain the same number of items as the "send" parameter. But
+        it does need to be the same number of items as in the "to" parameter
+        when both "to" and "as" are array references.
+
 0.01  2005-01-28T00:02:09
       - Initial public release.

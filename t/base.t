@@ -1,9 +1,9 @@
 #!perl -w
 
-# $Id: base.t 1168 2005-01-28 00:04:16Z theory $
+# $Id: base.t 1175 2005-01-29 20:39:09Z theory $
 
 use strict;
-use Test::More tests => 56;
+use Test::More tests => 81;
 
 BEGIN { use_ok('Class::Delegator') }
 
@@ -114,7 +114,7 @@ is $d->try, 'hello', "Make sure that the try attribute was set";
 is $d->{foo}->try, 'hello', "And that it is in the foo contained object";
 
 {
-    package MyTest::MutiAs;
+    package MyTest::MultiAs;
     sub new { bless { foo => MyTest::Foo->new } }
     use Class::Delegator
       send => [qw(rab yrt)],
@@ -123,9 +123,9 @@ is $d->{foo}->try, 'hello', "And that it is in the foo contained object";
     ;
 }
 
-can_ok 'MyTest::MutiAs', 'rab';
-can_ok 'MyTest::MutiAs', 'yrt';
-ok $d = MyTest::MutiAs->new, "Construct new multi object";
+can_ok 'MyTest::MultiAs', 'rab';
+can_ok 'MyTest::MultiAs', 'yrt';
+ok $d = MyTest::MultiAs->new, "Construct new multi object";
 is $d->rab, $d->{foo}->bar, "Make sure the rab values are the same";
 ok $d->rab('hello'), "Set the value via the rab delegate";
 is $d->rab, 'hello', "Make sure that the rab attribute was set";
@@ -134,6 +134,51 @@ is $d->yrt, $d->{foo}->try, "Make sure the yrt values are the same";
 ok $d->yrt('hello'), "Set the value via the yrt delegate";
 is $d->yrt, 'hello', "Make sure that the yrt attribute was set";
 is $d->{foo}->try, 'hello', "And that it is in the foo contained object";
+
+{
+    package MyTest::MultiTo;
+    sub new { bless { foo => MyTest::Foo->new, bat => MyTest::Foo->new } }
+    use Class::Delegator
+      send => 'bar',
+      to   => ['{foo}', '{bat}'],
+    ;
+}
+
+can_ok 'MyTest::MultiTo', 'bar';
+ok $d = MyTest::MultiTo->new, "Construct new MultiTo object";
+is $d->{foo}->bar, undef, "Check that foo's bar is undef";
+is $d->{bat}->bar, undef, "Check that bat's bar is undef";
+ok $d->bar('yo'), "Set bar_try to 'yo'";
+is $d->{foo}->bar, 'yo', "Check that foo's bar is now 'yo'";
+is $d->{bat}->bar, 'yo', "Check that bat's bar is now 'yow'";
+
+# Try getting the results.
+ok $d = MyTest::MultiTo->new, "Construct another MultiTo object";
+is_deeply [$d->bar(1)], [[1], [1]], "Check return array";
+is_deeply scalar $d->bar(1), [1, 1], "Check return arrayref";
+
+{
+    package MyTest::MultiToAs;
+    sub new { bless { foo => MyTest::Foo->new, bat => MyTest::Foo->new } }
+    use Class::Delegator
+      send => 'bar_try',
+      to   => ['{foo}', '{bat}'],
+      as   => [qw(bar try)],
+    ;
+}
+
+can_ok 'MyTest::MultiToAs', 'bar_try';
+ok $d = MyTest::MultiToAs->new, "Construct new MultiToAs object";
+is $d->{foo}->bar, undef, "Check that foo's bar is undef";
+is $d->{foo}->try, undef, "Check that foo's try is undef";
+is $d->{bat}->bar, undef, "Check that bat's bar is undef";
+is $d->{bat}->try, undef, "Check that bat's try is undef";
+ok $d->bar_try('yo'), "Set bar_try to 'yo'";
+is $d->{foo}->bar, 'yo', "Check that foo's bar is now 'yo'";
+is $d->{foo}->try, undef, "Check that foo's try is still undef";
+is $d->{bat}->bar, undef, "Check that bat's bar is still undef";
+is $d->{bat}->try, 'yo', "Check that bat's try is now 'yow'";
+
 
 {
     package MyTest::Errors;
@@ -148,9 +193,18 @@ is $d->{foo}->try, 'hello', "And that it is in the foo contained object";
     like $err, qr/Expected "to => <attribute spec>" but found "foo => bar"/,
       "Caught correct 'missing to' exception";
 
-    eval { Class::Delegator->import(send => ['foo'], to => 'bar', as => []) };
-    ok $err = $@, "Catch 'array length' exception";
-    like $err, qr/Arrays specified for "send" and "as" must be same length/,
-      "Caught correct 'array length' exception";
-}
+    eval { Class::Delegator->import(send => [], to => []) };
+    ok $err = $@, "Catch 'double array' exception";
+    like $err, qr/Cannot specify both "send" and "to" as arrays/,
+      "Caught correct 'double array' exception";
 
+    eval { Class::Delegator->import(send => 'foo', to => [1], as => []) };
+    ok $err = $@, "Catch 'different length' exception";
+    like $err, qr/Arrays specified for "to" and "as" must be same length/,
+      "Caught correct 'different length' exception";
+
+    eval { Class::Delegator->import(send => 'foo', to => [1], as => 1) };
+    ok $err = $@, "Catch 'scalar as' exception";
+    like $err, qr/Cannot specify "as" as a scalar if "to" is an array/,
+      "Caught correct 'scalar as' exception";
+}
