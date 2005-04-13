@@ -167,7 +167,7 @@ Description
 
 Benchmarks
     I whipped up a quick script to compare the performance of
-    Class::Delegator to Class::Delegegation and a manually-installed
+    Class::Delegator to Class::Delegation and a manually-installed
     delegation method (the control). I'll let the numbers speak for
     themselves:
 
@@ -177,8 +177,8 @@ Benchmarks
                Control:    3 wallclock secs ( 3.01 usr +  0.02 sys =  3.03 CPU) @ 330033.00/s (n=1000000)
 
 Bugs
-    Please send bug reports to <bug-class-delegator@rt.cpan.org> or via the
-    CPAN Request Tracker at
+    Please send bug reports to <bug-class-delegator@rt.cpan.org> or report
+    them via the CPAN Request Tracker at
     <http://rt.cpan.org/NoAuth/Bugs.html?Dist=Class-Delegator>.
 
 Author

@@ -1,10 +1,10 @@
 package Class::Delegator;
 
-# $Id: Delegator.pm 1175 2005-01-29 20:39:09Z theory $
+# $Id: Delegator.pm 1252 2005-02-11 02:14:40Z theory $
 
 use strict;
 
-$Class::Delegator::VERSION = '0.02';
+$Class::Delegator::VERSION = '0.03';
 
 =begin comment
 
@@ -210,7 +210,7 @@ sub import {
         if (ref $to) {
             my $as = ($_[0] || '') eq 'as' ? (shift, shift) : undef;
             if (ref $as) {
-                _die('Arrays specified for "to" and "as" must be same length')
+                _die('Arrays specified for "to" and "as" must be the same length')
                   unless @$to == @$as;
             } elsif (defined $as) {
                 _die('Cannot specify "as" as a scalar if "to" is an array')
@@ -265,7 +265,7 @@ sub _die {
 =head1 Benchmarks
 
 I whipped up a quick script to compare the performance of Class::Delegator to
-Class::Delegegation and a manually-installed delegation method (the control).
+Class::Delegation and a manually-installed delegation method (the control).
 I'll let the numbers speak for themselves:
 
   Benchmark: timing 1000000 iterations of Class::Delegation, Class::Delegator, Manually...
@@ -275,8 +275,9 @@ I'll let the numbers speak for themselves:
 
 =head1 Bugs
 
-Please send bug reports to <bug-class-delegator@rt.cpan.org> or via the CPAN
-Request Tracker at L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Class-Delegator>.
+Please send bug reports to <bug-class-delegator@rt.cpan.org> or report them
+via the CPAN Request Tracker at
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Class-Delegator>.
 
 =head1 Author
 

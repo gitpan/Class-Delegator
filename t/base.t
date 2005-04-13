@@ -1,9 +1,9 @@
 #!perl -w
 
-# $Id: base.t 1175 2005-01-29 20:39:09Z theory $
+# $Id: base.t 1520 2005-04-13 18:25:47Z theory $
 
 use strict;
-use Test::More tests => 81;
+use Test::More tests => 94;
 
 BEGIN { use_ok('Class::Delegator') }
 
@@ -40,6 +40,32 @@ is $d->bar, $d->{foo}->bar, "Make sure the simple values are the same";
 ok $d->bar('hello'), "Set the value via the simple delegate";
 is $d->bar, 'hello', "Make sure that the simple attribute was set";
 is $d->{foo}->bar, 'hello', "And that it is in the simple contained object";
+
+{
+    package MyTest::TwoSimple;
+    sub new { bless { foo => MyTest::Foo->new, foo2 => MyTest::Foo->new } }
+    use Class::Delegator
+      send => 'bar',
+      to   => '{foo}',
+
+      send => 'try',
+      to   => '{foo2}',
+    ;
+}
+
+can_ok 'MyTest::TwoSimple', 'bar';
+can_ok 'MyTest::TwoSimple', 'try';
+ok $d = MyTest::TwoSimple->new, "Construct new two simple object";
+is $d->bar, $d->{foo}->bar, "Make sure the bar simple values are the same";
+ok $d->bar('hello'), "Set the value via the bar simple delegate";
+is $d->bar, 'hello', "Make sure that the bar simple attribute was set";
+is $d->{foo}->bar, 'hello', "And that it is in the bar simple contained object";
+isnt $d->bar, $d->try, "Make sure that the two values are different";
+is $d->try, $d->{foo2}->try, "Make sure the try simple values are the same";
+ok $d->try('fee'), "Set the value via the try simple delegate";
+is $d->try, 'fee', "Make sure that the try simple attribute was set";
+is $d->{foo2}->try, 'fee', "And that it is in the try simple contained object";
+isnt $d->bar, $d->try, "Make sure that the two values are still different";
 
 {
     package MyTest::As;
@@ -200,7 +226,7 @@ is $d->{bat}->try, 'yo', "Check that bat's try is now 'yow'";
 
     eval { Class::Delegator->import(send => 'foo', to => [1], as => []) };
     ok $err = $@, "Catch 'different length' exception";
-    like $err, qr/Arrays specified for "to" and "as" must be same length/,
+    like $err, qr/Arrays specified for "to" and "as" must be the same length/,
       "Caught correct 'different length' exception";
 
     eval { Class::Delegator->import(send => 'foo', to => [1], as => 1) };

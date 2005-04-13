@@ -1,5 +1,10 @@
 Revision history for Perl extension Class::Delegator.
 
+0.03  2005-04-13T18:22:10
+      - Added a word missing from an error message.
+      - Fixed a spelling error. Reported by Ramesh R.
+      - Fixed a warning in the tests.
+
 0.02  2005-01-29T20:36:34
       - Added support for dispatching a single method call to multiple
         attributes. The "as" parameter can be used to dispatch to different
