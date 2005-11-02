@@ -1,10 +1,10 @@
 package Class::Delegator;
 
-# $Id: Delegator.pm 1252 2005-02-11 02:14:40Z theory $
+# $Id: Delegator.pm 1531 2005-04-14 18:04:36Z theory $
 
 use strict;
 
-$Class::Delegator::VERSION = '0.03';
+$Class::Delegator::VERSION = '0.04';
 
 =begin comment
 
@@ -117,7 +117,7 @@ number of elements in a corresponding C<send> array).
 If the attribute is specified via a single string, that string is taken as the
 name of the attribute to which the associated method (or methods) should be
 delegated. For example, to delegate invocations of C<$self-E<gt>power(...)> to
-C<$self-E<gt>{flywheel}-E<gt>power(...)>:
+C<$self-E<gt>{flywheel}-E<gt>brake(...)>:
 
   use Class::Delegator
       send => 'power',

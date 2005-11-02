@@ -94,7 +94,7 @@ Description
     If the attribute is specified via a single string, that string is taken
     as the name of the attribute to which the associated method (or methods)
     should be delegated. For example, to delegate invocations of
-    "$self->power(...)" to "$self->{flywheel}->power(...)":
+    "$self->power(...)" to "$self->{flywheel}->brake(...)":
 
       use Class::Delegator
           send => 'power',

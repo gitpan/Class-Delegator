@@ -1,5 +1,8 @@
 Revision history for Perl extension Class::Delegator.
 
+0.04  2005-11-02T03:04:23
+      - Minor documentation typo fix (cpan #12286).
+
 0.03  2005-04-13T18:22:10
       - Added a word missing from an error message.
       - Fixed a spelling error. Reported by Ramesh R.
