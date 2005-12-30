@@ -1,5 +1,15 @@
 Revision history for Perl extension Class::Delegator.
 
+0.05  2005-12-30T21:45:22
+      - Fixed a few more minor typos.
+      - Added #line comments to the generated delegation methods that point to
+        the context in which Class::Delegator was used. This makes debugging
+        easier, as any exceptions will have an appropriate file name and line
+        number rather than "at (eval 137) line 1". Patch from Sterling
+        Hanenkamp.
+      - Added meethod name information to the delegating methods, by assigning
+        the method name to *__ANON__.
+
 0.04  2005-11-02T03:04:23
       - Minor documentation typo fix (cpan #12286).
 

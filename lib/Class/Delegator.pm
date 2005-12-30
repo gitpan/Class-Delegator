@@ -1,10 +1,10 @@
 package Class::Delegator;
 
-# $Id: Delegator.pm 1531 2005-04-14 18:04:36Z theory $
+# $Id: Delegator.pm 2459 2005-12-30 21:45:11Z theory $
 
 use strict;
 
-$Class::Delegator::VERSION = '0.04';
+$Class::Delegator::VERSION = '0.05';
 
 =begin comment
 
@@ -41,8 +41,8 @@ Class::Delegator - Simple and fast object-oriented delegation
         as => [qw(start stop)],
 
       send => 'drive',
-        to => ["right_rear_wheel", "left_rear_wheel"],
-        as => ["rotate_clockwise", "rotate_anticlockwise"]
+        to => [qw(right_rear_wheel left_rear_wheel)],
+        as => [qw(rotate_clockwise rotate_anticlockwise)]
   ;
 
 
@@ -50,12 +50,11 @@ Class::Delegator - Simple and fast object-oriented delegation
 
 This module provides a subset of the functionality of Damian Conway's lovely
 L<Class::Delegation|Class::Delegation> module. Why a subset? Well, I didn't
-need all of the fancy matching semantics or dispatching to multiple delegated
-attributes, just string string specifications to map delegations. Furthermore,
-I wanted it to be fast (See L<Benchmarks|"Benchmarks">). And finally, since
-Class::Delegation uses an C<INIT> block to do its magic, it doesn't work in
-persistent environments that don't execute C<INIT> blocks, such as in
-L<mod_perl|mod_perl>.
+need all of the fancy matching semantics, just string string specifications to
+map delegations. Furthermore, I wanted it to be fast (See
+L<Benchmarks|"Benchmarks">). And finally, since Class::Delegation uses an
+C<INIT> block to do its magic, it doesn't work in persistent environments that
+don't execute C<INIT> blocks, such as in L<mod_perl|mod_perl>.
 
 However the specification semantics of Class::Delegator differ slightly from
 those of Class::Delegation, so this module isn't a drop-in replacement for
@@ -136,7 +135,7 @@ example:
   ;
 
 In this example, the C<accelerate> method will be delegated to the C<start>
-method of the <brakes> attribute and the C<decelerate> method will be
+method of the C<brakes> attribute and the C<decelerate> method will be
 delegated to the C<stop> method of the C<brakes> attribute.
 
 =head2 Delegation to multiple attributes in parallel
@@ -152,7 +151,7 @@ C<$self-E<gt>{right_rear_wheel}-E<gt>drive(...)>:
 
   use Class::Delegator
       send => 'drive',
-        to => ["{left_rear_wheel}", "{right_rear_wheel}"]\
+        to => ["{left_rear_wheel}", "{right_rear_wheel}"]
   ;
 
 Note that using an array to specify parallel delegation has an effect on the
@@ -161,7 +160,7 @@ scalar context, the original call returns a reference to an array containing
 the (scalar context) return values of each of the calls. In a list context,
 the original call returns a list of array references containing references to
 the individual (list context) return lists of the calls. So, for example, if
-the <cost> method of a class were delegated like so:
+the C<cost> method of a class were delegated like so:
 
   use Class::Delegator
       send => 'cost',
@@ -194,7 +193,7 @@ would sequentially call, within the C<escape()> delegation method:
 
 sub import {
     my $class = shift;
-    my $caller = caller;
+    my ($caller, $filename, $line) = caller;
     while (@_) {
         my ($key, $send) = (shift, shift);
         _die(qq{Expected "send => <method spec>" but found "$key => $send"})
@@ -218,8 +217,12 @@ sub import {
                 $as = [];
             }
 
+            my $meth = "$caller\::$send";
             my @lines =  (
-                'sub { my ($self, @args) = @_;',
+                # Copy @_ to @args to ensure same args passed to all methods.
+                "#line $line $filename",
+                "sub { local \*__ANON__ = '$meth';",
+                'my ($self, @args) = @_;',
                 'my @ret;',
             );
             my @array = (
@@ -237,7 +240,7 @@ sub import {
                 push @array,  "[\$self->$t->$m(\@args)],";
             }
             no strict 'refs';
-            *{"${caller}::$send"} = eval join "\n", @lines, @array, @scalar, ']', '}';
+            *{$meth} = eval join "\n", @lines, @array, @scalar, ']', '}';
 
         } else {
             my $as = ($_[0] || '') eq 'as'
@@ -246,10 +249,16 @@ sub import {
             $send = [$send] unless ref $send;
 
             while (@$send) {
-                my $s = shift @$send;
-                my $m = shift @$as || $s;
+                my $s    = shift @$send;
+                my $m    = shift @$as || $s;
+                my $meth = "$caller\::$s";
                 no strict 'refs';
-                *{"${caller}::$s"} = eval "sub { shift->$to->$m(\@_) }";
+                *{$meth} = eval qq{#line $line $filename
+                    sub {
+                        local \*__ANON__ = '$meth';
+                        shift->$to->$m(\@_);
+                    };
+                };
             }
         }
     }
