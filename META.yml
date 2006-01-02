@@ -1,6 +1,6 @@
 ---
 name: Class-Delegator
-version: 0.05
+version: 0.06
 author:
   - David Wheeler <david@kineticode.com>
 abstract: Simple and fast object-oriented delegation
@@ -12,7 +12,7 @@ build_requires:
 provides:
   Class::Delegator:
     file: lib/Class/Delegator.pm
-    version: 0.05
+    version: 0.06
 generated_by: Module::Build version 0.2704
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

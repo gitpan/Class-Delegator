@@ -1,6 +1,6 @@
 #!perl -w
 
-# $Id: base.t 2458 2005-12-30 21:40:11Z theory $
+# $Id: base.t 2466 2006-01-02 18:27:26Z theory $
 
 use strict;
 use Test::More tests => 99;
@@ -248,10 +248,10 @@ LINENOS: {
 # Fake out line numbering so that we can just use one in the test.
 #line 248 t/base.t
     use Class::Delegator
-      send => 'hey',
+      send => 'hey', # Line 251, error should be from here.
       to   => 'try'
     ;
-    # Line 253, error should be from here.
+    # Line 253, sometimes error is here. No idea why.
 }
 
 ok my $try = MyTest::LineNos->new, 'Create new LineNos object';
@@ -260,7 +260,7 @@ local $SIG{__DIE__} = \&confess;
 eval { $try->hey };
 ok my $err = $@, 'Should Catch exception';
 my $fn = 't/base.t';
-like $err, qr/called (?:at\s+$fn|$fn\s+at)\s+line 253/,
+like $err, qr/called (?:at\s+$fn|$fn\s+at)\s+line 25[13]/,
     'The exception should have this file name in it';
 like $err, qr/MyTest::LineNos::hey/,
     'The exception should have the name of the delegating method';

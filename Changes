@@ -1,5 +1,9 @@
 Revision history for Perl extension Class::Delegator.
 
+0.06  2006-01-02T18:28:48
+      - Fixed test failures on some platforms. It seems that how error line
+        numbers are determined can vary from Perl to Perl.
+
 0.05  2005-12-30T21:45:22
       - Fixed a few more minor typos.
       - Added #line comments to the generated delegation methods that point to
