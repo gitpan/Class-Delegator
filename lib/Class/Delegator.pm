@@ -1,10 +1,10 @@
 package Class::Delegator;
 
-# $Id: Delegator.pm 2460 2005-12-30 21:46:03Z theory $
+# $Id: Delegator.pm 3782 2008-05-05 17:53:26Z david $
 
 use strict;
 
-$Class::Delegator::VERSION = '0.06';
+$Class::Delegator::VERSION = '0.07';
 
 =begin comment
 
@@ -325,7 +325,7 @@ C<as> parameter does.
 
 =head1 Copyright and License
 
-Copyright (c) 2005 Kineticode, Inc. All Rights Reserved.
+Copyright (c) 2005-2008 David Wheeler. Some Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.

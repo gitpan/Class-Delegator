@@ -1,6 +1,6 @@
 #!perl -w
 
-# $Id: base.t 2466 2006-01-02 18:27:26Z theory $
+# $Id: base.t 2466 2006-01-02 18:27:26Z david $
 
 use strict;
 use Test::More tests => 99;
