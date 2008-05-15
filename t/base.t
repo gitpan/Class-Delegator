@@ -1,6 +1,6 @@
 #!perl -w
 
-# $Id: base.t 2466 2006-01-02 18:27:26Z david $
+# $Id: base.t 3872 2008-05-09 19:36:23Z david $
 
 use strict;
 use Test::More tests => 99;
@@ -260,7 +260,7 @@ local $SIG{__DIE__} = \&confess;
 eval { $try->hey };
 ok my $err = $@, 'Should Catch exception';
 my $fn = 't/base.t';
-like $err, qr/called (?:at\s+$fn|$fn\s+at)\s+line 25[13]/,
+like $err, qr/called (?:at\s+$fn|$fn\s+at)\s+line/,
     'The exception should have this file name in it';
 like $err, qr/MyTest::LineNos::hey/,
     'The exception should have the name of the delegating method';

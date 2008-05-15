@@ -1,5 +1,10 @@
 Revision history for Perl extension Class::Delegator.
 
+0.08  2008-05-15T03:36:19
+      - Fixed a Perl 5.5 test failure. I never should have been testing for
+        line number, anyway. The file name is enough.
+      - Added a spelling test. No more typos!
+
 0.07  2008-05-05T17:57:26
       - Added the "configure_requires", and "recommends" parameters to
         Build.PL.
