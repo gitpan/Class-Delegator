@@ -1,10 +1,10 @@
 package Class::Delegator;
 
-# $Id: Delegator.pm 3786 2008-05-05 17:55:32Z david $
+# $Id: Delegator.pm 3912 2008-05-15 03:33:00Z david $
 
 use strict;
 
-$Class::Delegator::VERSION = '0.08';
+$Class::Delegator::VERSION = '0.09';
 
 =begin comment
 

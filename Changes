@@ -1,5 +1,9 @@
 Revision history for Perl extension Class::Delegator.
 
+0.09  2008-05-22T03:27:06
+      - Removed the spelling test from the distribution, since it can fail on
+        systems without a spell program or using a different locale.
+
 0.08  2008-05-15T03:36:19
       - Fixed a Perl 5.5 test failure. I never should have been testing for
         line number, anyway. The file name is enough.
